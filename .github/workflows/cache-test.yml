@@ -18,8 +18,8 @@ jobs:
         id: restore
         uses: actions/cache/restore@v4
         with:
-          path: cache-me
-          key: cache-me-test-key
+          path: cache-me/file-in-cache.txt
+          key: cache-me-test-key-3
 
       - name: Show files before modification
         run: |
@@ -43,8 +43,8 @@ jobs:
         if: steps.restore.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
-          path: cache-me
-          key: cache-me-test-key
+          path: cache-me/file-in-cache.txt
+          key: cache-me-test-key-3
 
       - name: Modify cached directory 2
         run: |
@@ -57,8 +57,8 @@ jobs:
         id: restore2
         uses: actions/cache/restore@v4
         with:
-          path: cache-me
-          key: cache-me-test-key
+          path: cache-me/file-in-cache.txt
+          key: cache-me-test-key-3
 
       - name: Show files after second restore
         run: |
