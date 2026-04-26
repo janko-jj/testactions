@@ -46,6 +46,12 @@ jobs:
           path: cache-me
           key: cache-me-test-key
 
+      - name: Modify cached directory 2
+        run: |
+          echo "MODIFIED CONTENT 2" > cache-me/file-in-cache.txt
+          echo "NEW FILE 2" > cache-me/new-file-2.txt
+          echo "Neighbour still here?" >> neighbour.txt
+
       # --- RESTORE AGAIN TO PROVE BEHAVIOR ---
       - name: Restore cache again
         id: restore2
