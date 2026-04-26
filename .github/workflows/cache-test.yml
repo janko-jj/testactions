@@ -1,0 +1,64 @@
+name: Cache Behavior Test
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-cache:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # --- RESTORE CACHE ---
+      - name: Restore cache
+        id: restore
+        uses: actions/cache/restore@v4
+        with:
+          path: cache-me
+          key: cache-me-test-key
+
+      - name: Show files before modification
+        run: |
+          echo "=== BEFORE MODIFICATION ==="
+          ls -R .
+
+      # Modify the cached directory so we can see what gets restored
+      - name: Modify cached directory
+        run: |
+          echo "MODIFIED CONTENT" > cache-me/file-in-cache.txt
+          echo "NEW FILE" > cache-me/new-file.txt
+          echo "Neighbour still here?" >> neighbour.txt
+
+      - name: Show files after modification
+        run: |
+          echo "=== AFTER MODIFICATION ==="
+          ls -R .
+
+      # --- SAVE CACHE (only first run) ---
+      - name: Save cache
+        if: steps.restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: cache-me
+          key: cache-me-test-key
+
+      # --- RESTORE AGAIN TO PROVE BEHAVIOR ---
+      - name: Restore cache again
+        id: restore2
+        uses: actions/cache/restore@v4
+        with:
+          path: cache-me
+          key: cache-me-test-key
+
+      - name: Show files after second restore
+        run: |
+          echo "=== AFTER SECOND RESTORE ==="
+          ls -R .
+          echo "Contents of cache-me/file-in-cache.txt:"
+          cat cache-me/file-in-cache.txt
+          echo "Contents of neighbour.txt:"
+          cat neighbour.txt
